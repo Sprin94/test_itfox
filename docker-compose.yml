@@ -4,12 +4,43 @@ services:
     container_name: postgresql
     image: postgres:14.5
     env_file: .env
+    volumes:
+      - data_base:/var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
-    # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U ${DB_NAME}"]
-    #   interval: 5s
-    #   timeout: 5s
-    #   retries: 5
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  web:
+    build:
+      context: app/.
+    expose:
+      - 8000
+    volumes:
+      - static_value:/app/static/
+    env_file: .env
+    restart: always
+    environment:
+      - POSTGRES_NAME=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+  nginx:
+    image: nginx:1.21.3-alpine
+    restart: unless-stopped
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - static_value:/var/html/static/
+    depends_on:
+      - web
+    ports:
+      - 80:80
+volumes:
+  static_value:
+  data_base:
