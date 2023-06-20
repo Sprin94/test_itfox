@@ -30,7 +30,7 @@ class NewsSerializer(ModelSerializer):
         model = News
         fields = '__all__'
 
-    def get_last_comments(self, obj):
+    def get_last_comments(self, obj) -> CommentSerializer(many=True):
         comments = obj.comments.order_by('-date').all()[:10]
         return CommentSerializer(comments, many=True).data
 
