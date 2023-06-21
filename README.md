@@ -1,12 +1,3 @@
-Сервис доступен по адресу http://3.137.178.137/
-# Были созданы пользователи:
-| login | passwod |
-| ----------- | ----------- |
- | admin|admin|
- | user|user|
- | user2|user2|
- | user_admin|user_admin|
- 
 # Тестовое задание   
 Python developer
 
